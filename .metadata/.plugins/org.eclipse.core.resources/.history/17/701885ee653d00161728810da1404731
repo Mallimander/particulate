@@ -1,0 +1,5 @@
+package com.mallimander.particulate;
+
+public class Particle {
+
+}
