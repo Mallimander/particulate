@@ -5,12 +5,14 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+//import java.awt.Color;
 import java.util.ArrayList;
 
 public class Particulate extends ApplicationAdapter {
@@ -24,6 +26,10 @@ public class Particulate extends ApplicationAdapter {
 	
 	private int mX = 0;
 	private int mY = 0;
+	
+	private float xS = 0;
+	private float yS = 0;
+	
 	
 	private ArrayList<Particle> particles;
 	private int maxParts = 1000;
@@ -43,7 +49,7 @@ public class Particulate extends ApplicationAdapter {
 		input = Gdx.input;
 		particles = new ArrayList<Particle>();
 		int [] goo = {1,2};
-		ems = new Emitter[]{new Emitter(100, 200, 3f, 3f, (byte)0), new Emitter(100, 200, 3f, 3f, (byte)1)};
+		ems = new Emitter[]{new Emitter(100, 200, 3f, 3f, (byte)0), new Emitter(100, 200, 3f, 3f, (byte)1), new Emitter(100, 200, 3f, 3f, (byte)2, Color.PINK), new Emitter(100, 200, 3f, 3f, (byte)2)};
 
 //		em = new Emitter(100, 200, 3f, 3f, (byte)0);
 		
@@ -79,17 +85,50 @@ public class Particulate extends ApplicationAdapter {
 		if(input.isKeyPressed(Keys.NUM_2)){
 			i = 1;
 		}
+		if(input.isKeyPressed(Keys.NUM_3)){
+			i = 2;
+		}
+		if(input.isKeyPressed(Keys.NUM_4)){
+			i = 3;
+		}
 		
+		if(input.isKeyPressed(Keys.LEFT) && xS > -20){
+			xS -= 0.5f;
+		}
+		
+		if(input.isKeyPressed(Keys.RIGHT) && xS < 20){
+			xS += 0.5f;
+		}
+		
+		if(input.isKeyPressed(Keys.UP) && yS < 20){
+			yS += 0.5f;
+		}
+		
+		if(input.isKeyPressed(Keys.DOWN) && yS > -20){
+			yS -= 0.5f;
+		}
+		
+		if(input.isKeyJustPressed(Keys.PLUS) && gravity < 10f){
+			gravity += 1;
+		}
+		
+		if(input.isKeyJustPressed(Keys.MINUS) && gravity > -10f){
+			gravity -= 1;
+		}
 		
 		if(input.isTouched()){
-			mX = input.getX()-32;
-			mY = screenHeight-input.getY()-32;
+			mX = input.getX();
+			mY = screenHeight-input.getY();
 			ems[i].setX(mX);
 			ems[i].setY(mY);
-			ems[i].setXS((screenWidth - mX)*0.02f); 
-			ems[i].setYS((screenHeight - mY)*0.02f); 
+//			ems[i].setXS((screenWidth - mX)*0.02f); 
+//			ems[i].setYS((screenHeight - mY)*0.02f);
+			ems[i].setXS(xS); 
+			ems[i].setYS(yS);
 			if(particles.size() < maxParts){
-				particles.add( ems[i].Emit(mX, mY) );
+				for(int e = 0; e < 5; e++){
+					particles.add( ems[i].Emit(mX, mY) );
+				}
 			}
 		}
 		
@@ -125,7 +164,7 @@ public class Particulate extends ApplicationAdapter {
 		
 		for(Particle p : particles){
 			if(p.lSpan > 0){
-				p.update(gravity, drag);
+				p.update(gravity);
 			}else{
 				removeList.add(p);
 			}

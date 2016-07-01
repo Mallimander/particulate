@@ -11,14 +11,16 @@ public class Particle {
 	public int lSpan;
 	public byte type;
 	private Texture t;
+	private float drag;
 	
-	public Particle (int x, int y, float xSpeed, float ySpeed, byte type, int lifeSpan, Texture tex){
+	public Particle (int x, int y, float xSpeed, float ySpeed, byte type, int lifeSpan, float drag, Texture tex){
 		this.x = x;
 		this.y = y;
 		xS = xSpeed;
 		yS = ySpeed;
 		this.type = type;
 		lSpan = lifeSpan;
+		this.drag = drag;
 		t = tex;
 		
 	}
@@ -30,7 +32,7 @@ public class Particle {
 		return t;
 	}
 	
-	public void update(float gravity, float drag){
+	public void update(float gravity){
 		if(xS > 0){
 			if(xS > drag){
 				xS -= drag;
