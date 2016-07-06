@@ -5,16 +5,20 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+//import java.awt.Color;
 import java.util.ArrayList;
 
 public class Particulate extends ApplicationAdapter {
 	SpriteBatch batch;
+	BitmapFont font;
 	Texture img;
 	Texture pixmapTex;
 	Input input;
@@ -25,10 +29,15 @@ public class Particulate extends ApplicationAdapter {
 	private int mX = 0;
 	private int mY = 0;
 	
+	private float xS = 0;
+	private float yS = 0;
+	
+	
 	private ArrayList<Particle> particles;
 	private int maxParts = 1000;
 	
 	private Emitter[] ems;
+	private Emitter campfire, sprinkler;
 	
 	private float gravity = -5f;
 	private float drag = 0.1f;
@@ -39,12 +48,15 @@ public class Particulate extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		font = new BitmapFont();
+		font.setColor(Color.WHITE);
 		img = new Texture("badlogic.jpg");
 		input = Gdx.input;
 		particles = new ArrayList<Particle>();
 		int [] goo = {1,2};
-		ems = new Emitter[]{new Emitter(100, 200, 3f, 3f, (byte)0), new Emitter(100, 200, 3f, 3f, (byte)1)};
-
+		ems = new Emitter[]{new Emitter(100, 200, 3f, 3f, (byte)0), new Emitter(100, 200, 3f, 3f, (byte)1), new Emitter(100, 200, 3f, 3f, (byte)2, Color.PINK), new Emitter(100, 200, 3f, 3f, (byte)2),  new Emitter(100, 200, 3f, 3f, (byte)3)};
+		campfire = new Emitter(200, 100, 0f, 0f, (byte)3); 
+		sprinkler = new Emitter(150, 150, 3f, 5f, (byte)0); 
 //		em = new Emitter(100, 200, 3f, 3f, (byte)0);
 		
 //		Pixmap pixmap = new Pixmap( 64, 64, Format.RGBA8888 );
@@ -79,17 +91,53 @@ public class Particulate extends ApplicationAdapter {
 		if(input.isKeyPressed(Keys.NUM_2)){
 			i = 1;
 		}
+		if(input.isKeyPressed(Keys.NUM_3)){
+			i = 2;
+		}
+		if(input.isKeyPressed(Keys.NUM_4)){
+			i = 3;
+		}
+		if(input.isKeyPressed(Keys.NUM_5)){
+			i = 4;
+		}
 		
+		if(input.isKeyPressed(Keys.LEFT) && xS > -20){
+			xS -= 0.5f;
+		}
+		
+		if(input.isKeyPressed(Keys.RIGHT) && xS < 20){
+			xS += 0.5f;
+		}
+		
+		if(input.isKeyPressed(Keys.UP) && yS < 20){
+			yS += 0.5f;
+		}
+		
+		if(input.isKeyPressed(Keys.DOWN) && yS > -20){
+			yS -= 0.5f;
+		}
+		
+		if(input.isKeyJustPressed(Keys.PLUS) && gravity < 10f){
+			gravity += 1;
+		}
+		
+		if(input.isKeyJustPressed(Keys.MINUS) && gravity > -10f){
+			gravity -= 1;
+		}
 		
 		if(input.isTouched()){
-			mX = input.getX()-32;
-			mY = screenHeight-input.getY()-32;
+			mX = input.getX();
+			mY = screenHeight-input.getY();
 			ems[i].setX(mX);
 			ems[i].setY(mY);
-			ems[i].setXS((screenWidth - mX)*0.02f); 
-			ems[i].setYS((screenHeight - mY)*0.02f); 
+//			ems[i].setXS((screenWidth - mX)*0.02f); 
+//			ems[i].setYS((screenHeight - mY)*0.02f);
+			ems[i].setXS(xS); 
+			ems[i].setYS(yS);
 			if(particles.size() < maxParts){
-				particles.add( ems[i].Emit(mX, mY) );
+				for(int e = 0; e < 2; e++){
+					particles.add( ems[i].Emit(mX, mY) );
+				}
 			}
 		}
 		
@@ -117,21 +165,34 @@ public class Particulate extends ApplicationAdapter {
 		for(Particle pTemp : particles){
 			batch.draw(pTemp.getTexture(), pTemp.x, pTemp.y);
 		}
+		font.draw(batch, "FPS:" + Gdx.graphics.getFramesPerSecond() + " G:" + gravity + " xS:" + xS + " yS:" + yS, 100, 100);
 		batch.end();
 	}
 	
 	private void update(){
 		ArrayList<Particle> removeList = new ArrayList<Particle>();
+		ArrayList<Particle> addList = new ArrayList<Particle>();
+		
+		addList.add(campfire.Emit(0, 0));
+		addList.add(sprinkler.Emit(0, 0));
 		
 		for(Particle p : particles){
 			if(p.lSpan > 0){
-				p.update(gravity, drag);
+				p.update(gravity);
 			}else{
+				if(p.type == (byte)3 && Math.random() < 0.5){
+					ems[1].setX((int)p.x);
+					ems[1].setY((int)p.y);
+					ems[1].setXS(p.xS); 
+					ems[1].setYS(p.yS);
+					addList.add(ems[1].Emit((int)p.x, (int)p.y));
+				}
 				removeList.add(p);
 			}
 		}
 		
 		particles.removeAll(removeList);
+		particles.addAll(addList);
 		
 	}
 	
