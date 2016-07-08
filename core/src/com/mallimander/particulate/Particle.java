@@ -47,6 +47,9 @@ public class Particle {
 	}
 	
 	public void update(float gravity){
+		
+		
+		
 //		if(xS > 0){
 //			if(xS > drag){
 //				xS -= drag;
@@ -60,6 +63,7 @@ public class Particle {
 //				xS = 0;
 //			}
 //		}
+		
 		
 		x += xS+(-xS*drag);
 		

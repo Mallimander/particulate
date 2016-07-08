@@ -37,7 +37,7 @@ public class Particulate extends ApplicationAdapter {
 	private int maxParts = 1000;
 	
 	private Emitter[] ems;
-	private Emitter campfire, sprinkler;
+	private Emitter campfire, sprinkler, gemshower;
 	
 	private float gravity = -5f;
 	private float drag = 0.1f;
@@ -56,7 +56,8 @@ public class Particulate extends ApplicationAdapter {
 		int [] goo = {1,2};
 		ems = new Emitter[]{new Emitter(100, 200, 3f, 3f, (byte)0), new Emitter(100, 200, 3f, 3f, (byte)1), new Emitter(100, 200, 3f, 3f, (byte)2, Color.PINK), new Emitter(100, 200, 3f, 3f, (byte)2),  new Emitter(100, 200, 3f, 3f, (byte)3)};
 		campfire = new Emitter(200, 100, 0f, 0f, (byte)3); 
-		sprinkler = new Emitter(150, 150, 3f, 5f, (byte)0); 
+		sprinkler = new Emitter(150, 150, 3f, 5f, (byte)0);
+		gemshower =  new Emitter(300, 200, 3f, 5f, (byte)4);
 //		em = new Emitter(100, 200, 3f, 3f, (byte)0);
 		
 //		Pixmap pixmap = new Pixmap( 64, 64, Format.RGBA8888 );
@@ -175,6 +176,7 @@ public class Particulate extends ApplicationAdapter {
 		
 		addList.add(campfire.Emit(0, 0));
 		addList.add(sprinkler.Emit(0, 0));
+		addList.add(gemshower.Emit(0, 0));
 		
 		for(Particle p : particles){
 			if(p.lSpan > 0){

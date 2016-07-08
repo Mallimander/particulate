@@ -43,7 +43,7 @@ public class Emitter {
 		
 		Particle p = null;
 		Pixmap pixmap;
-		float light, tXS, tYS;
+		float light, tXS, tYS, base;
 		
 		switch(type){
 		//water?
@@ -170,6 +170,44 @@ public class Emitter {
 			tYS = (float)(Math.random()*3 - 1.5f) + yS;
 			
 			p = new Particle(x-8, y-8, tXS, tYS, type, (int)(Math.random()*10+15), 0.25f, -1.0f, new Texture(pixmap));
+			System.out.println("Made Particle " + tXS + ", " + tYS);
+			pixmap.dispose();
+			
+		break;
+		
+		//Gem
+		case 4:
+			
+			pixmap = new Pixmap( 16, 16, Format.RGBA8888 );
+					light = (float)(Math.random()*0.3);
+					base = (float)(Math.random()*0.2+0.8);
+			pixmap.setColor(light,base,light,1f);
+//					for(int i = 4; i < 12; i++){
+//						for(int j = 4; j < 12; j++){
+//							if(Math.random()<0.3){
+//								pixmap.fillCircle(i+(int)(Math.random()*4+-2), j+(int)(Math.random()*4-2), (int)(Math.random()*2+2) );
+//							}
+//						}
+//					}
+			
+			int width = (int)(Math.random()*4+12);
+			
+			pixmap.setColor(1,1,1,1f);
+			pixmap.fillTriangle(8, 8,  8,  16-width,  16-width,  8);
+			light += 0f;
+			pixmap.setColor(light,base,light,1f);
+			pixmap.fillTriangle(8, 8, 8,  width,  width,  8);
+			light += 0.3f;
+			pixmap.setColor(light,base,light,1f);
+			pixmap.fillTriangle(8, 8,  8,  width,  16-width,  8);
+			light += 0.2f;
+			pixmap.setColor(light,base,light,1f);
+			pixmap.fillTriangle(8, 8, 8,  16-width,  width,  8);
+			
+			tXS = (float)(Math.random()*4 - 2.0f) + xS;
+			tYS = (float)(Math.random()*3 - 1.5f) + yS;
+			
+			p = new Particle(x-8, y-8, tXS, tYS, type, 120, 0.25f, 1.5f, new Texture(pixmap));
 			System.out.println("Made Particle " + tXS + ", " + tYS);
 			pixmap.dispose();
 			
